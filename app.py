@@ -1,3 +1,4 @@
+from helpers.model_selector import detect_task_type, suggest_models
 from helpers.data_loader import load_data
 import streamlit as st
 import pandas as pd
@@ -23,3 +24,14 @@ if uploaded_file is not None:
     st.write("**Shape:**", df.shape)
     st.write("**Columns and Types:**")
     st.write(df.dtypes)
+
+st.subheader("🧠 Task Type Detection")
+task_type = detect_task_type(df)
+st.write(f'Detected Task Type: `{task_type}`')
+
+models = suggest_models(task_type)
+if models:
+  st.write("Suggested Model:")
+  st.write(models)
+else:
+  st.warning("Couldn't suggest any models. Try another dataset or check the target column")
