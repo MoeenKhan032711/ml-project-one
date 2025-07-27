@@ -37,12 +37,19 @@ if models:
 else:
   st.warning("Couldn't suggest any models. Try another dataset or check the target column")
 
-seleted_model = st.select_box("🎯 Choose a model to train", models)
+seleted_model = st.select_box("🎯 Choose one or more models to train", models)
 
 if st.button("Train Model"):
-  with st.spinner("Training..."):
-    score, metric_name = train_model(df, selected_model, task_type)
-    if score is not None:
-      st.success(f"{selected_model} {metric_name}: `{score:.4f}`")
-    else:
-      st.error("Model training failed.")
+  if not selected_models:
+    st.warning("Please select at least one model.")
+  else:
+    results = []
+    with st.spinner("Training models..."):
+      for model_name in selected_models:
+        score, metric_name = train_model(df, model_name, task_type)
+        if score is not None:
+          results.append((model_name, score))
+        else:
+          results.append((model_name, "❌ Error"))
+  st.subheader("📈 Model Performance Comparison")
+  st.table({"Model": [r[0] for r in results], metric_name: [r[1] for r in results]})
