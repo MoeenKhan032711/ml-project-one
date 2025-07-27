@@ -1,4 +1,5 @@
 from helpers.model_selector import detect_task_type, suggest_models
+from helpers.trainer import train_model
 from helpers.data_loader import load_data
 import streamlit as st
 import pandas as pd
@@ -35,3 +36,13 @@ if models:
   st.write(models)
 else:
   st.warning("Couldn't suggest any models. Try another dataset or check the target column")
+
+seleted_model = st.select_box("🎯 Choose a model to train", models)
+
+if st.button("Train Model"):
+  with st.spinner("Training..."):
+    score, metric_name = train_model(df, selected_model, task_type)
+    if score is not None:
+      st.success(f"{selected_model} {metric_name}: `{score:.4f}`")
+    else:
+      st.error("Model training failed.")
