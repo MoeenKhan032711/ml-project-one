@@ -53,3 +53,12 @@ if st.button("Train Model"):
           results.append((model_name, "❌ Error"))
   st.subheader("📈 Model Performance Comparison")
   st.table({"Model": [r[0] for r in results], metric_name: [r[1] for r in results]})
+
+if len(selected_models) >= 2:
+  if st.button("Ensemble Selected Models"):
+    with st.spinner("Building Ensemble..."):
+      ensemble_score, metric = ensemble_models(df, selected_models, task_type)
+      if ensemble_score is not None:
+        st.success(f"Ensembled Models {metric}: `{ensemble_score:.4f}`")
+      else:
+        st.error("Failed to build ensemble.")
